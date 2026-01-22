@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barcode Scanner App</title>
+    <title>Scanner App - Power Automate</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
@@ -11,27 +11,41 @@
 
 <div class="container">
     <header>
-        <h2>Barcode Scanner</h2>
-        <p>Input data sebelum melakukan pemindaian</p>
+        <h2>Aplikasi Scan Sisa Event Guardian</h2>
+        <p>Data akan langsung terkirim ke Server</p>
     </header>
-    
-    <div class="input-group">
-        <label>Nama Scan</label>
-        <input type="text" id="namaScan" placeholder="Masukkan nama Anda">
-        
-        <label>Code Store</label>
-        <input type="text" id="codeStore" placeholder="Contoh: STORE-01">
-        
-        <label>Quantity</label>
-        <input type="number" id="qtyScan" value="1" min="1">
+
+    <hr>
+
+    <div class="input-form">
+        <div class="field">
+            <label for="namaScan">Nama Scan</label>
+            <input type="text" id="namaScan" placeholder="Contoh: Fulan">
+        </div>
+
+        <div class="field">
+            <label for="codeStore">Code Store</label>
+            <input type="text" id="codeStore" placeholder="Contoh: 3203">
+        </div>
+
+        <div class="field">
+            <label for="qtyScan">Quantity</label>
+            <input type="number" id="qtyScan" value="1" min="1">
+        </div>
+    </div>
+
+    <div class="action-area">
+        <button id="startBtn" class="btn-primary">Aktifkan Kamera</button>
     </div>
 
     <div id="reader"></div>
-    
+
     <div id="resultArea" class="result-card">
-        <div class="status-badge">Terdeteksi</div>
-        <p>Barcode: <strong id="scannedCode">-</strong></p>
-        <button id="sendBtn" class="btn-send">Kirim ke Power Automate</button>
+        <div class="badge">Barcode Terdeteksi</div>
+        <div class="barcode-value">
+            <span id="scannedCode"></span>
+        </div>
+        <button id="sendBtn" class="btn-success">Kirim Data</button>
     </div>
 </div>
 

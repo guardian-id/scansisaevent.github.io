@@ -1,43 +1,56 @@
-// Ganti dengan URL dari HTTP Trigger Power Automate Anda
+// GANTI DENGAN URL FLOW POWER AUTOMATE ANDA
 const powerAutomateUrl = "https://default9ec0d6c58a25418fb3841c77c55584.c2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2212167e0b4644b095c71f413d64034d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Weaii9pe3fNhjuf89xGcLQx9GUGbsMvDgmAZE5P-ZGM";
 
 let scannedBarcode = "";
-
-// 1. Inisialisasi Scanner
 const html5QrCode = new Html5Qrcode("reader");
-const config = { 
-    fps: 10, 
-    qrbox: { width: 250, height: 150 },
-    aspectRatio: 1.0 
-};
 
-// Fungsi saat scan berhasil
-function onScanSuccess(decodedText) {
-    scannedBarcode = decodedText;
-    document.getElementById('scannedCode').innerText = decodedText;
-    document.getElementById('resultArea').style.display = 'block';
+const startBtn = document.getElementById('startBtn');
+const readerArea = document.getElementById('reader');
+const resultArea = document.getElementById('resultArea');
+const scannedCodeText = document.getElementById('scannedCode');
+
+// 1. Fungsi Klik Tombol Aktifkan Kamera
+startBtn.addEventListener('click', () => {
+    readerArea.style.display = 'block';
     
-    // Memberikan feedback getaran pada HP
-    if (navigator.vibrate) navigator.vibrate(100);
-}
+    const config = { 
+        fps: 10, 
+        qrbox: { width: 250, height: 150 }
+    };
 
-// Menjalankan Kamera Belakang
-html5QrCode.start(
-    { facingMode: "environment" }, 
-    config, 
-    onScanSuccess
-).catch(err => {
-    console.error("Gagal akses kamera: ", err);
+    html5QrCode.start(
+        { facingMode: "environment" }, 
+        config, 
+        (decodedText) => {
+            // Jika scan berhasil
+            scannedBarcode = decodedText;
+            scannedCodeText.innerText = decodedText;
+            resultArea.style.display = 'block';
+            
+            if (navigator.vibrate) navigator.vibrate(100);
+
+            // Matikan kamera secara otomatis setelah scan berhasil
+            stopCamera();
+        }
+    ).catch(err => {
+        alert("Kamera tidak diizinkan atau tidak ditemukan.");
+    });
 });
 
-// 2. Fungsi Kirim Data ke Power Automate
+function stopCamera() {
+    html5QrCode.stop().then(() => {
+        readerArea.style.display = 'none';
+    }).catch(err => console.error(err));
+}
+
+// 2. Fungsi Kirim Data
 document.getElementById('sendBtn').addEventListener('click', async () => {
     const nama = document.getElementById('namaScan').value;
     const store = document.getElementById('codeStore').value;
     const qty = document.getElementById('qtyScan').value;
 
-    if (!nama || !store || !qty) {
-        alert("Mohon isi semua data input terlebih dahulu!");
+    if (!nama || !store || !qty || !scannedBarcode) {
+        alert("Mohon lengkapi Nama, Store, dan Scan Barcode!");
         return;
     }
 
@@ -46,7 +59,7 @@ document.getElementById('sendBtn').addEventListener('click', async () => {
         code_store: store,
         qty: parseInt(qty),
         barcode: scannedBarcode,
-        timestamp: new Date().toLocaleString('id-ID')
+        timestamp: new Date().toISOString()
     };
 
     try {
@@ -57,14 +70,18 @@ document.getElementById('sendBtn').addEventListener('click', async () => {
         });
 
         if (response.ok) {
-            alert("Data Berhasil Terkirim ke Sistem!");
-            // Reset form setelah sukses
-            location.reload();
+            alert("Berhasil Terkirim!");
+            
+            // RESET HANYA AREA BARCODE & QTY
+            scannedBarcode = "";
+            resultArea.style.display = 'none';
+            document.getElementById('qtyScan').value = "1";
+            
+            // Nama & Store Code TIDAK direset agar bisa scan barang lain dengan cepat
         } else {
-            alert("Gagal mengirim data. Cek koneksi atau URL Flow.");
+            alert("Gagal kirim. Cek URL Power Automate.");
         }
     } catch (error) {
-        console.error("Error:", error);
-        alert("Terjadi kesalahan teknis.");
+        alert("Kesalahan koneksi internet.");
     }
 });
