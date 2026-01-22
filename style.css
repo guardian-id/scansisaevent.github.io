@@ -1,60 +1,48 @@
 body {
-    font-family: 'Inter', sans-serif;
-    margin: 0; padding: 15px;
-    background-color: #121212; color: #fff;
+    font-family: 'Inter', -apple-system, sans-serif;
+    margin: 0; padding: 15px; background-color: #121212; color: #fff;
 }
 
 .container {
-    max-width: 480px; margin: auto;
-    background: #1e1e1e; padding: 20px;
-    border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    max-width: 450px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 16px;
 }
 
-.header h2 { margin: 0; color: #4CAF50; }
-.header p { font-size: 12px; color: #888; margin-bottom: 20px; }
-
-.form-group { margin-bottom: 15px; }
-label { display: block; font-size: 13px; margin-bottom: 5px; color: #bbb; }
-
+.form-group { margin-bottom: 12px; }
+label { display: block; font-size: 13px; margin-bottom: 5px; color: #aaa; }
 input {
-    width: 100%; padding: 12px;
-    background: #2d2d2d; border: 1px solid #444;
+    width: 100%; padding: 12px; background: #2d2d2d; border: 1px solid #444;
     border-radius: 8px; color: #fff; font-size: 16px; box-sizing: border-box;
 }
 
-/* Tombol Scan */
-#btnToggleScan {
-    width: 100%; padding: 15px;
-    background-color: #4CAF50; color: white;
-    border: none; border-radius: 8px;
-    font-size: 16px; font-weight: bold;
-    cursor: pointer; margin: 10px 0;
-    transition: background 0.3s;
+.control-row { display: flex; gap: 10px; margin-bottom: 10px; }
+
+button {
+    flex: 1; padding: 15px; border: none; border-radius: 8px;
+    font-weight: bold; cursor: pointer; transition: 0.3s;
 }
 
+#btnToggleScan { background-color: #4CAF50; color: white; }
 #btnToggleScan.active { background-color: #ff3b30; }
+#btnSwitchCamera { background-color: #555; color: white; }
 
 #interactive {
-    position: relative; width: 100%; height: 250px;
-    border-radius: 12px; overflow: hidden;
-    background: #000; margin-top: 10px;
+    position: relative; width: 100%; height: 250px; border-radius: 12px;
+    overflow: hidden; background: #000;
 }
 
 #interactive video { width: 100%; height: 100%; object-fit: cover; }
 
+/* Laser Overlay */
 .scan-region {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 70%; height: 60%;
-    border: 2px solid #4CAF50;
-    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
-    z-index: 10;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 80%; height: 40%; border: 2px solid #4CAF50;
+    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.6); z-index: 10;
 }
 
 .scanner-laser {
     position: absolute; width: 100%; height: 2px;
-    background-color: #ff3b30; box-shadow: 0 0 8px #ff3b30;
-    top: 0; animation: scanMove 2s infinite linear;
+    background-color: #ff3131; box-shadow: 0 0 10px #ff3131;
+    top: 0; animation: scanMove 1.5s infinite linear;
 }
 
 @keyframes scanMove {
@@ -62,7 +50,5 @@ input {
 }
 
 .status-container {
-    margin-top: 15px; padding: 10px;
-    text-align: center; background: #2d2d2d; border-radius: 8px;
+    margin-top: 15px; padding: 10px; text-align: center; background: #2d2d2d; border-radius: 8px;
 }
-#status { color: #4CAF50; font-weight: bold; }
