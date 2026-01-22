@@ -1,5 +1,5 @@
 // LINK MILIK BOS SUDAH SAYA MASUKKAN DI SINI
-const powerAutomateUrl = "https://default9ec0d6c58a25418fb3841c77c55584.c2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2212167e0b4644b095c71f413d64034d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Weaii9pe3fNhjuf89xGcLQx9GUGbsMvDgmAZE5P-ZGM";
+const powerAutomateUrl = "https://default9ec0d6c58a25418fb3841c77c55584.c2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/94a03cb9caf9468283a577af2259eb28/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Y7rszqMFmER7xtcQCKp23hlHPbIw5Ce5sBwB-XeqpZk";
 
 let scannedBarcode = "";
 const html5QrCode = new Html5Qrcode("reader");
