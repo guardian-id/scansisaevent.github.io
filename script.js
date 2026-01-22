@@ -1,4 +1,4 @@
-const powerAutomateURL = "PASTE_URL_FLOW_ANDA_DISINI";
+const powerAutomateURL = "https://default9ec0d6c58a25418fb3841c77c55584.c2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2212167e0b4644b095c71f413d64034d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Weaii9pe3fNhjuf89xGcLQx9GUGbsMvDgmAZE5P-ZGM";
 let isScanning = false;
 
 function toggleScanner() {
