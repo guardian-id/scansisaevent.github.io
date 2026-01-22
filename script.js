@@ -1,112 +1,70 @@
-const powerAutomateURL = "PASTE_URL_FLOW_ANDA_DISINI";
-let isScanning = false;
-let currentFacingMode = "environment"; // Default kamera belakang
+// Ganti dengan URL dari HTTP Trigger Power Automate Anda
+const powerAutomateUrl = "https://default9ec0d6c58a25418fb3841c77c55584.c2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2212167e0b4644b095c71f413d64034d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Weaii9pe3fNhjuf89xGcLQx9GUGbsMvDgmAZE5P-ZGM";
 
-function toggleScanner() {
-    if (isScanning) {
-        stopScanner();
-    } else {
-        startScanner();
-    }
-}
+let scannedBarcode = "";
 
-function switchCamera() {
-    // Ubah mode kamera
-    currentFacingMode = (currentFacingMode === "environment") ? "user" : "environment";
+// 1. Inisialisasi Scanner
+const html5QrCode = new Html5Qrcode("reader");
+const config = { 
+    fps: 10, 
+    qrbox: { width: 250, height: 150 },
+    aspectRatio: 1.0 
+};
+
+// Fungsi saat scan berhasil
+function onScanSuccess(decodedText) {
+    scannedBarcode = decodedText;
+    document.getElementById('scannedCode').innerText = decodedText;
+    document.getElementById('resultArea').style.display = 'block';
     
-    if (isScanning) {
-        // Jika sedang nyala, restart dengan mode baru
-        Quagga.stop();
-        startScanner();
-    } else {
-        alert("Mode kamera diubah ke: " + (currentFacingMode === "user" ? "Depan" : "Belakang"));
-    }
+    // Memberikan feedback getaran pada HP
+    if (navigator.vibrate) navigator.vibrate(100);
 }
 
-function startScanner() {
-    document.getElementById('scanner-container').style.display = 'block';
-    document.getElementById('btnToggleScan').innerText = "Berhenti";
-    document.getElementById('btnToggleScan').classList.add('active');
-    document.getElementById('status').innerText = "Status: Mencari Barcode...";
-
-    Quagga.init({
-        inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: document.querySelector('#interactive'),
-            constraints: {
-                facingMode: currentFacingMode,
-                width: { min: 640 },
-                height: { min: 480 }
-            },
-        },
-        locator: {
-            patchSize: "medium", // Ukuran pencarian barcode (medium paling stabil)
-            halfSample: true
-        },
-        decoder: {
-            // Membaca berbagai tipe barcode populer
-            readers: ["code_128_reader", "ean_reader", "upc_reader", "code_39_reader"]
-        },
-        locate: true
-    }, function(err) {
-        if (err) {
-            console.error(err);
-            alert("Error: " + err.name);
-            return;
-        }
-        Quagga.start();
-        isScanning = true;
-    });
-}
-
-function stopScanner() {
-    Quagga.stop();
-    document.getElementById('scanner-container').style.display = 'none';
-    document.getElementById('btnToggleScan').innerText = "Mulai Scan";
-    document.getElementById('btnToggleScan').classList.remove('active');
-    document.getElementById('status').innerText = "Status: Kamera Mati";
-    isScanning = false;
-}
-
-Quagga.onDetected(function(result) {
-    if (result.codeResult.code) {
-        const code = result.codeResult.code;
-        // Auto-Close: Langsung stop kamera
-        stopScanner();
-        // Kirim data JSON
-        sendData(code);
-    }
+// Menjalankan Kamera Belakang
+html5QrCode.start(
+    { facingMode: "environment" }, 
+    config, 
+    onScanSuccess
+).catch(err => {
+    console.error("Gagal akses kamera: ", err);
 });
 
-async function sendData(barcode) {
+// 2. Fungsi Kirim Data ke Power Automate
+document.getElementById('sendBtn').addEventListener('click', async () => {
+    const nama = document.getElementById('namaScan').value;
+    const store = document.getElementById('codeStore').value;
+    const qty = document.getElementById('qtyScan').value;
+
+    if (!nama || !store || !qty) {
+        alert("Mohon isi semua data input terlebih dahulu!");
+        return;
+    }
+
     const payload = {
-        nama_scan: document.getElementById('scanName').value,
-        store_code: document.getElementById('storeCode').value,
-        barcode: barcode,
-        qty: parseInt(document.getElementById('qty').value),
-        timestamp: new Date().toISOString()
+        nama_scan: nama,
+        code_store: store,
+        qty: parseInt(qty),
+        barcode: scannedBarcode,
+        timestamp: new Date().toLocaleString('id-ID')
     };
 
-    const statusDiv = document.getElementById('status');
-    statusDiv.innerText = "Mengirim Data: " + barcode;
-
     try {
-        const response = await fetch(powerAutomateURL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        const response = await fetch(powerAutomateUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
         if (response.ok) {
-            statusDiv.innerText = "Sukses: " + barcode;
-            // Auto Reset Qty
-            document.getElementById('qty').value = "1";
+            alert("Data Berhasil Terkirim ke Sistem!");
+            // Reset form setelah sukses
+            location.reload();
         } else {
-            statusDiv.innerText = "Gagal Kirim ke Server";
+            alert("Gagal mengirim data. Cek koneksi atau URL Flow.");
         }
     } catch (error) {
-        statusDiv.innerText = "Error Koneksi";
-        console.error(error);
+        console.error("Error:", error);
+        alert("Terjadi kesalahan teknis.");
     }
-}
+});

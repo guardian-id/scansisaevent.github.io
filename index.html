@@ -3,48 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smooth Barcode Scanner</title>
+    <title>Barcode Scanner App</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h2>Smart Scanner</h2>
-        <p>Gunakan kamera belakang untuk hasil maksimal</p>
-    </div>
+    <header>
+        <h2>Barcode Scanner</h2>
+        <p>Input data sebelum melakukan pemindaian</p>
+    </header>
     
-    <div class="form-group">
+    <div class="input-group">
         <label>Nama Scan</label>
-        <input type="text" id="scanName" placeholder="Masukkan Nama Batch">
+        <input type="text" id="namaScan" placeholder="Masukkan nama Anda">
+        
+        <label>Code Store</label>
+        <input type="text" id="codeStore" placeholder="Contoh: STORE-01">
+        
+        <label>Quantity</label>
+        <input type="number" id="qtyScan" value="1" min="1">
     </div>
 
-    <div class="form-group">
-        <label>Store Code</label>
-        <input type="text" id="storeCode" placeholder="Masukkan Kode Toko">
-    </div>
-
-    <div class="form-group">
-        <label>Qty Scan</label>
-        <input type="number" id="qty" value="0" min="0">
-    </div>
-
-    <div class="control-row">
-        <button id="btnToggleScan" onclick="toggleScanner()">Mulai Scan</button>
-        <button id="btnSwitchCamera" onclick="switchCamera()">Ganti Kamera</button>
-    </div>
-
-    <div id="scanner-container" style="display: none;">
-        <div id="interactive" class="viewport">
-            <div class="scan-region">
-                <div class="scanner-laser"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="status-container">
-        <div id="status">Status: Kamera Mati</div>
+    <div id="reader"></div>
+    
+    <div id="resultArea" class="result-card">
+        <div class="status-badge">Terdeteksi</div>
+        <p>Barcode: <strong id="scannedCode">-</strong></p>
+        <button id="sendBtn" class="btn-send">Kirim ke Power Automate</button>
     </div>
 </div>
 
